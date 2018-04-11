@@ -56,6 +56,15 @@ Counting Game
 CountingGame <Foreground> <input_filename.raw> <output_filename.raw>
 Foreground: 0-Black 1-White, Background (set automatically) = Opposite of Foreground
 
+Texture Classification
+TextureClassifcation <Number of clusters> <Balance> <Normalize> <Initializer> <use Feature Reduction> <input_images_folder>
+
+Texture Segmentation
+TextureSegmentation <Number of clusters> <Laws' filter size> <Balance> <Normalize> <Initializer> <window size> <use Feature Reduction> <input_filename.raw> <output_filename.raw>
+
+Basic Edge Detection
+BasicEdgeDetection <detection filter> <threshold percent (integer)> <print histogram> <denoise> <input_filename.raw> <output_filename.raw>
+
 In every program, the user will be asked to enter the image properties as follows:
 Enter image size as <height> <width> <1-grayscale/3-color>, e.g. 100 50 3
 

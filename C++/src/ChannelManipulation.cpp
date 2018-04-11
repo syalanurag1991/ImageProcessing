@@ -183,7 +183,7 @@ vector<vector<vector<unsigned char>>> SingleChannelBucketFilling (vector<vector<
 //RGB to CMY
 vector<vector<vector<unsigned char>>> RGBtoCMY(vector<vector<vector<unsigned char>>>ImageVector){
 	
-	cout << "Converting to from RGB to CMY ...\n";
+	cout << "\nConverting to from RGB to CMY ...\n";
 	
 	vector<vector<vector<unsigned char>>>manipulatedImageVector;
 	for(vector<vector<vector<unsigned char>>>::iterator itRow = ImageVector.begin(); itRow!=ImageVector.end(); itRow++){
@@ -256,7 +256,7 @@ vector<vector<vector<unsigned char>>> GrayAverage(vector<vector<vector<unsigned 
 //Grayscale - Luminosity Method
 vector<vector<vector<unsigned char>>> GrayLuminosity(vector<vector<vector<unsigned char>>>ImageVector){
 	
-	cout << "Creating a grayscale image by Luminosity Method...\n";
+	cout << "\nCreating a grayscale image by Luminosity Method...\n";
 	
 	vector<vector<vector<unsigned char>>>manipulatedImageVector;
 	
@@ -267,19 +267,15 @@ vector<vector<vector<unsigned char>>> GrayLuminosity(vector<vector<vector<unsign
 			vector<unsigned char> ImageColumn = *itColumn;
 			
 			float sum = 0;
-			for(vector<unsigned char>::iterator itChannel = ImageColumn.begin(); itChannel!=ImageColumn.end(); itChannel++){
-				int temp = (int)*itChannel;
-				if(itChannel == ImageColumn.begin()){
-					sum += 0.21*(float)temp;
-				} else if (itChannel == ImageColumn.end()){
-					sum += 0.07*(float)temp;
-				} else {
-					sum += 0.72*(float)temp;
-				}
-			}
+			sum = (0.21*(float)ImageColumn[0]) + (0.72*(float)ImageColumn[1]) + (0.07*(float)ImageColumn[2]);
+
 			int temp = (int)sum;
+			
+			if(temp > 255)
+				temp = 255;
+
 			vector<unsigned char> grayChannel;
-			grayChannel.push_back((unsigned char)(sum/3));
+			grayChannel.push_back((unsigned char)(temp));
 			newImageColumn.push_back(grayChannel);
 		}
 		manipulatedImageVector.push_back(newImageColumn);

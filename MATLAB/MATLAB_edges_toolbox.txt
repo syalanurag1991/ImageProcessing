@@ -1,0 +1,35 @@
+Steps for 2b and 2c:
+
+1. Download strutured edge toolbox
+	https://github.com/pdollar/edges
+
+2. Download Piotr's Matlab Toolbox
+	https://pdollar.github.io/toolbox/
+
+3. Do addpath for Piotr's toolbox
+	addpath(<path>);  savepath;
+
+4. Open structured edge's toolbox
+
+5. In file, EdgesDemo.m, add below to the end of file
+
+----------------------------------------------------------
+%% threshold the probability edge map
+T = bsxfun(@gt, E, 0.15);
+figure(3); im(1-T);
+load('House.mat');
+figure(4); im(groundTruth{1,5}.Boundaries);
+[thrs,cntR,sumR,cntP,sumP,V] = edgesEvalImg( E, 'house' );
+R = cntR ./ sumR;
+P = cntP ./ sumP;
+precision = mean(P);
+recall    = mean(R);
+
+f = 2 * (precision * recall) ./ (precision + recall);
+precision = precision * 100;
+recall    = recall    * 100;
+f         = f         * 100;
+fprintf("\n\nPrecision: %0.2f Recall: %0.2f F-measure: %0.2f\n", precision, recall, f);
+----------------------------------------------------------
+
+Change file names, thresholds accordingly.

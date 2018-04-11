@@ -95,5 +95,32 @@ bool ImageOutput(string fileName, vector<vector<vector<unsigned char>>>ImageVect
     return true;
 }
 
+//Get entries/file-names of a directory
+vector <string> OpenFolder (string folderPath) {
 
+	DIR *workingDirectory;
+	dirent *directoryEntries;
+	vector <string> files;
 
+	//cout << "\nChecking folder\n";
+
+	workingDirectory = opendir(folderPath.c_str());
+
+	if(workingDirectory == NULL){
+		cout << "Error (" << errno << ") opening " << folderPath << endl;
+		closedir(workingDirectory);
+		return files;
+	}
+
+	while ((directoryEntries = readdir(workingDirectory)) != NULL) {
+		string fileName = directoryEntries -> d_name;
+		if(fileName == "." || fileName == "..")
+			continue;
+		files.push_back(fileName);
+		//cout << directoryEntries->d_name << "\n";
+	}
+
+	closedir(workingDirectory);
+	return files;
+
+}

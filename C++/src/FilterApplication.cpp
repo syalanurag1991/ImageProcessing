@@ -15,13 +15,12 @@ vector<vector<vector<unsigned char>>> FilterPreprocessing(vector<vector<vector<u
     //Edges of the original image are replicated to fill up the blank space
     //This is done so that the edges and corners can be smoothed
 	
-	cout << "Preparing channel for filter operation ...\n";
-
 	int outputWidth  = width+kernelSize-1;
 	int outputHeight = height+kernelSize-1;
 	
-	cout << "Input Width : " << width << " Input Height : " << height << "\n";
-	cout << "Output Width: " << outputWidth << " Output Height: " << outputHeight << "\n\n";
+    //cout << "Preparing channel for filter operation\n";
+	//cout << "Input Width : " << width << " Input Height : " << height << "\n";
+	//cout << "Output Width: " << outputWidth << " Output Height: " << outputHeight << "\n\n";
 	
 	vector<unsigned char> channelVector(BytesPerPixel, 0);
 	vector<vector<unsigned char>> rowVector(outputWidth, channelVector);
@@ -33,53 +32,61 @@ vector<vector<vector<unsigned char>>> FilterPreprocessing(vector<vector<vector<u
     		for(int k=0; k<BytesPerPixel; k++)
     			manipulatedImageVector[ i+(kernelSize/2) ][ j+(kernelSize/2) ][k] = ImageVector[i][j][k];
     
-    //Copying the top edge to the upper blank space
+    //Reflect top edges to the upper blank space
 	for(int i=0; i<kernelSize/2; i++)
     	for(int j=0; j<width; j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[0][j][k];
+    			//manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[0][j][k];
+                manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[kernelSize/2 - i - 1][j][k];
     
-    //Copying the bottom edge to the lower blank space
+    //Reflect bottom edges to the lower blank space
     for(int i=height+(kernelSize)/2; i < outputHeight; i++)
     	for(int j=0; j<width; j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[height-1][j][k];
+    			//manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[height-1][j][k];
+                manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[ (height-1) - (i - (height + (kernelSize/2))) ][j][k];
     
-    //Copying the left edge to blank space on left
+    //Reflect left edges to blank space on left
     for(int i=0; i<height; i++)
-    	for(int j=0; j < (kernelSize/2)+1; j++)
+    	for(int j=0; j < (kernelSize/2); j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][0][k];
+    			//manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][0][k];
+                manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][kernelSize/2 - j - 1][k];
     
-    //Copying the right edge to blank space on right
+    //Reflect right edges to blank space on right
     for(int i=0; i<height; i++)
     	for(int j=width+(kernelSize/2); j < outputWidth; j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][width-1][k];
+    			//manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][width-1][k];
+                manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][ (width-1) - (j - (width + (kernelSize/2))) ][k];
 
-    //Copying the top-left corner
+    //Reflecting top-left corner
     for(int i=0; i<kernelSize/2; i++)
     	for(int j=0; j<kernelSize/2; j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i][j][k]=ImageVector[i][j][k];
+    			//manipulatedImageVector[i][j][k]=ImageVector[i][j][k];
+                manipulatedImageVector[i][j][k]=ImageVector[kernelSize/2 - i - 1][kernelSize/2 - j - 1][k];
 
-    //Copying the top-right corner
+    //Reflecting top-right corner
     for(int i=0; i<kernelSize/2; i++)
     	for(int j=width+(kernelSize/2); j<outputWidth; j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i][j][k]=ImageVector[i][j-kernelSize+1][k];
+    			//manipulatedImageVector[i][j][k]=ImageVector[i][j-kernelSize+1][k];
+                manipulatedImageVector[i][j][k]=ImageVector[kernelSize/2 - i - 1][ (width-1) - (j - (width + (kernelSize/2))) ][k];
     
-    //Copying the bottom-left corner
+    //Reflecting bottom-left corner
     for(int i=height+(kernelSize)/2; i < outputHeight; i++)
     	for(int j=0; j<kernelSize/2; j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i][j][k]=ImageVector[i-kernelSize+1][j][k];
+    			//manipulatedImageVector[i][j][k]=ImageVector[i-kernelSize+1][j][k];
+                manipulatedImageVector[i][j][k]=ImageVector[ (height-1) - (i - (height + (kernelSize/2))) ][kernelSize/2 - j - 1][k];
 
-    //Copying the bottom-right corner
+    //Reflecting bottom-right corner
     for(int i=height+(kernelSize)/2; i < outputHeight; i++)
     	for(int j=width+(kernelSize/2); j < outputWidth; j++)
     		for(int k=0; k<BytesPerPixel; k++)
-    			manipulatedImageVector[i][j][k]=ImageVector[i-kernelSize+1][j-kernelSize+1][k];
+    			//manipulatedImageVector[i][j][k]=ImageVector[i-kernelSize+1][j-kernelSize+1][k];
+                manipulatedImageVector[i][j][k]=ImageVector[ (height-1) - (i - (height + (kernelSize/2))) ][ (width-1) - (j - (width + (kernelSize/2))) ][k];
     			
     return manipulatedImageVector;
 }
@@ -92,6 +99,87 @@ vector<vector<vector<unsigned char>>> FilterPreprocessing(vector<vector<vector<u
     vector<vector<vector<unsigned char>>> manipulatedImageVector = FilterPreprocessing(ImageVector, height, width, BytesPerPixel, kernelSize);
 
     return manipulatedImageVector;
+}
+
+//Preparing a channel image for filter operations, like Gaussian Filter or Low-Pass filter - PASS BY REFERENCE
+void FilterPreprocessing(vector<vector<vector<unsigned char>>> &ImageVector, int &kernelSize,
+                             vector<vector<vector<unsigned char>>> &manipulatedImageVector){
+    //Expecting an image buffer with increased dimensions in manipulated image vector
+    //Edges of the original image are replicated to fill up the blank space
+    //This is done so that the edges and corners can be smoothed
+    
+    int height = ImageVector.size();
+    int width = ImageVector.front().size();
+    int BytesPerPixel = ImageVector.front().front().size();
+
+    int outputHeight = manipulatedImageVector.size();
+    int outputWidth = manipulatedImageVector.front().size();
+
+    //cout << "Preparing channel for filter operation\n";
+    //cout << "Input Width : " << width << " Input Height : " << height << "\n";
+    //cout << "Output Width: " << outputWidth << " Output Height: " << outputHeight << "\n\n";
+    
+    //Copying the raw image in to middle of the block
+    for(int i=0; i<height; i++)
+        for(int j=0; j<width; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                manipulatedImageVector[ i+(kernelSize/2) ][ j+(kernelSize/2) ][k] = ImageVector[i][j][k];
+    
+    //Reflect top edges to the upper blank space
+    for(int i=0; i<kernelSize/2; i++)
+        for(int j=0; j<width; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[0][j][k];
+                manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[kernelSize/2 - i - 1][j][k];
+    
+    //Reflect bottom edges to the lower blank space
+    for(int i=height+(kernelSize)/2; i < outputHeight; i++)
+        for(int j=0; j<width; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[height-1][j][k];
+                manipulatedImageVector[i][ j+(kernelSize/2) ][k] = ImageVector[ (height-1) - (i - (height + (kernelSize/2))) ][j][k];
+    
+    //Reflect left edges to blank space on left
+    for(int i=0; i<height; i++)
+        for(int j=0; j < (kernelSize/2); j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][0][k];
+                manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][kernelSize/2 - j - 1][k];
+    
+    //Reflect right edges to blank space on right
+    for(int i=0; i<height; i++)
+        for(int j=width+(kernelSize/2); j < outputWidth; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][width-1][k];
+                manipulatedImageVector[i+(kernelSize/2)][j][k] = ImageVector[i][ (width-1) - (j - (width + (kernelSize/2))) ][k];
+
+    //Reflecting top-left corner
+    for(int i=0; i<kernelSize/2; i++)
+        for(int j=0; j<kernelSize/2; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i][j][k]=ImageVector[i][j][k];
+                manipulatedImageVector[i][j][k]=ImageVector[kernelSize/2 - i - 1][kernelSize/2 - j - 1][k];
+
+    //Reflecting top-right corner
+    for(int i=0; i<kernelSize/2; i++)
+        for(int j=width+(kernelSize/2); j<outputWidth; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i][j][k]=ImageVector[i][j-kernelSize+1][k];
+                manipulatedImageVector[i][j][k]=ImageVector[kernelSize/2 - i - 1][ (width-1) - (j - (width + (kernelSize/2))) ][k];
+    
+    //Reflecting bottom-left corner
+    for(int i=height+(kernelSize)/2; i < outputHeight; i++)
+        for(int j=0; j<kernelSize/2; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i][j][k]=ImageVector[i-kernelSize+1][j][k];
+                manipulatedImageVector[i][j][k]=ImageVector[ (height-1) - (i - (height + (kernelSize/2))) ][kernelSize/2 - j - 1][k];
+
+    //Reflecting bottom-right corner
+    for(int i=height+(kernelSize)/2; i < outputHeight; i++)
+        for(int j=width+(kernelSize/2); j < outputWidth; j++)
+            for(int k=0; k<BytesPerPixel; k++)
+                //manipulatedImageVector[i][j][k]=ImageVector[i-kernelSize+1][j-kernelSize+1][k];
+                manipulatedImageVector[i][j][k]=ImageVector[ (height-1) - (i - (height + (kernelSize/2))) ][ (width-1) - (j - (width + (kernelSize/2))) ][k];
 }
 
 //Create a Gaussian filter kernel of given size
@@ -138,25 +226,27 @@ vector<vector<vector<unsigned char>>> SingleChannelGaussFilter(vector<vector<vec
 	vector<vector<unsigned char>> newImageColumn(outputWidth, newImageChannel);
 	vector<vector<vector<unsigned char>>>resultImageVector(outputHeight, newImageColumn);
 
-	vector<float> kernelColumn(kernelSize, 0);
-	vector<vector<float>> tempKernelBuffer (kernelSize, kernelColumn);
-
 	for(int q=0; q<outputHeight; q++){
     	for(int p=0; p<outputWidth; p++){
     			
     		float runningSum = 0;
     		for(int j=0; j<kernelSize; j++){
 			    for(int i=0; i<kernelSize; i++){
-			    	tempKernelBuffer[j][i] = (float)SingleChannelVector[ j+q ][ i+p ][0] * gaussKernel[j][i];
-			    	runningSum += tempKernelBuffer[j][i];
+			    	runningSum += (float)SingleChannelVector[ j+q ][ i+p ][0] * gaussKernel[j][i];
 			    }
 			}
+
+            if(runningSum>255)
+                runningSum=255;
+            if(runningSum<0)
+                runningSum=0;
+            
 			resultImageVector[q][p][0] = (unsigned char)runningSum;
 
     	}
     }
 
-    cout << "Gauss filter applied to channel ...\n";
+    cout << "Gauss filter applied to channel\n";
 
     return resultImageVector;
 }
@@ -706,6 +796,548 @@ vector<vector<vector<unsigned char>>> SingleChannelErrorDiffusion(vector<vector<
     }
 
     cout << setw(5) << "pixelMin: " << pixelMin << " pixelMax: " << pixelMax << "\n";
-    cout << "Error diffusion applied to channel ...\n\n";
+    cout << "Error diffusion applied to channel\n\n";
     return manipulatedImageVector;
 }
+
+/////////////////////////////////////////////   TEXTURE ANALYSIS    /////////////////////////////////////////////////////////////////
+//Create Laws' Filter kernels
+vector<vector<vector<float>>> CreateLawsFilter (int kernelDimension){
+
+    //5 dimensional Laws' filters
+    vector<vector<float>> E5E5 = {
+        {0.0278, 0.0556, 0, -0.0556, -0.0278},
+        {0.0556, 0.1111, 0, -0.1111, -0.0556},
+        {0, 0, 0, 0, 0},
+        {-0.0556, -0.1111, 0, 0.1111, 0.0556},
+        {-0.0278, -0.0556, 0, 0.0556, 0.0278}
+    };
+
+    vector<vector<float>> E5S5 = {
+        {0.0417, 0, -0.0833, 0, -0.0417},
+        {0.0833, 0, -0.1667, 0, -0.0833},
+        {0, 0, 0, 0, 0},
+        {-0.0833, 0, 0.1667, 0, 0.0833},
+        {-0.0417, 0, 0.0833, 0, 0.0417}
+    };
+
+    vector<vector<float>> E5W5 = {
+        {0.0278, -0.0556, 0, 0.0556, -0.0278},
+        {0.0556, -0.1111, 0, 0.1111, -0.0556},
+        {0, 0, 0, 0, 0},
+        {-0.0556, 0.1111, 0, -0.1111, 0.0556},
+        {-0.0278, 0.0556, 0, -0.0556, 0.0278}
+    };
+
+    vector<vector<float>> S5E5 = {
+        {0.0417, 0.0833, 0, -0.0833, -0.0417},
+        {0, 0, 0, 0, 0},
+        {-0.0833, -0.1667, 0, 0.1667, 0.0833},
+        {0, 0, 0, 0, 0},
+        {-0.0417, -0.0833, 0, 0.0833, 0.0417}
+    };
+
+    vector<vector<float>> S5S5 = {
+        {0.0625, 0, -0.125, 0, -0.0625},
+        {0, 0, 0, 0, 0},
+        {-0.125, 0, 0.25, 0, 0.125},
+        {0, 0, 0, 0, 0},
+        {-0.0625, 0, 0.125, 0, 0.0625}
+    };
+
+    vector<vector<float>> S5W5 = {
+        {0.0417, -0.0833, 0, 0.0833, -0.0417},
+        {0, 0, 0, 0, 0},
+        {-0.0833, 0.1667, 0, -0.1667, 0.0833},
+        {0, 0, 0, 0, 0},
+        {-0.0417, 0.0833, 0, -0.0833, 0.0417}
+    };
+
+    vector<vector<float>> W5E5 = {
+        {0.0278, 0.0556, 0, -0.0556, -0.0278},
+        {-0.0556, -0.1111, 0, 0.1111, 0.0556},
+        {0, 0, 0, 0, 0},
+        {0.0556, 0.1111, 0, -0.1111, -0.0556},
+        {-0.0278, -0.0556, 0, 0.0556, 0.0278}
+    };
+
+    vector<vector<float>> W5S5 = {
+        {0.0417, 0, -0.0833, 0, -0.0417},
+        {-0.0833, 0, 0.1667, 0, 0.0833},
+        {0, 0, 0, 0, 0},
+        {0.0833, 0, -0.1667, 0, -0.0833},
+        {-0.0417, 0, 0.0833, 0, 0.0417}
+    };
+
+    vector<vector<float>> W5W5 = {
+        {0.0278, -0.0556, 0, 0.0556, -0.0278},
+        {-0.0556, 0.1111, 0, -0.1111, 0.0556},
+        {0, 0, 0, 0, 0},
+        {0.0556, -0.1111, 0, 0.1111, -0.0556},
+        {-0.0278, 0.0556, 0, -0.0556, 0.0278}
+    };
+
+    vector<vector<float>> L5E5 = {
+        {-0.010417, -0.041667, -0.062500, -0.041667, -0.010417},
+        {-0.020833, -0.083333, -0.125000, -0.083333, -0.020833},
+        {0.000000, 0.000000, 0.000000, 0.000000, 0.000000},
+        {0.020833, 0.083333, 0.125000, 0.083333, 0.020833},
+        {0.010417, 0.041667, 0.062500, 0.041667, 0.010417}
+    };
+
+    vector<vector<float>> L5R5 = {
+        {0.003906, 0.015625, 0.023438, 0.015625, 0.003906},
+        {-0.015625, -0.062500, -0.093750, -0.062500, -0.015625},
+        {0.023438, 0.093750, 0.140625, 0.093750, 0.023438},
+        {-0.015625, -0.062500, -0.093750, -0.062500, -0.015625},
+        {0.003906, 0.015625, 0.023438, 0.015625, 0.003906}  
+    };
+
+    vector<vector<float>> R5R5 = {
+        {0.003906, -0.015625, 0.023438, -0.015625, 0.003906},
+        {-0.015625, 0.062500, -0.093750, 0.062500, -0.015625},
+        {0.023438, -0.093750, 0.140625, -0.093750, 0.023438},
+        {-0.015625, 0.062500, -0.093750, 0.062500, -0.015625},
+        {0.003906, -0.015625, 0.023438, -0.015625, 0.003906}    
+    };
+
+    vector<vector<float>> L5S5 = {
+        {-0.015625, -0.062500, -0.093750, -0.062500, -0.015625},
+        {0.000000, 0.000000, 0.000000, 0.000000, 0.000000},
+        {0.031250, 0.125000, 0.187500, 0.125000, 0.031250},
+        {0.000000, 0.000000, 0.000000, 0.000000, 0.000000},
+        {-0.015625, -0.062500, -0.093750, -0.062500, -0.015625} 
+    };
+
+    vector<vector<float>> E5R5 = {
+        {-0.010417, -0.020833, 0.000000, 0.020833, 0.010417},
+        {0.041667, 0.083333, 0.000000, -0.083333, -0.041667},
+        {-0.062500, -0.125000, 0.000000, 0.125000, 0.062500},
+        {0.041667, 0.083333, 0.000000, -0.083333, -0.041667},
+        {-0.010417, -0.020833, 0.000000, 0.020833, 0.010417}    
+    };
+
+    vector<vector<float>> S5R5 = {
+        {-0.015625, 0.000000, 0.031250, 0.000000, -0.015625},
+        {0.062500, 0.000000, -0.125000, 0.000000, 0.062500},
+        {-0.093750, 0.000000, 0.187500, 0.000000, -0.093750},
+        {0.062500, 0.000000, -0.125000, 0.000000, 0.062500},
+        {-0.015625, 0.000000, 0.031250, 0.000000, -0.015625}    
+    };
+
+    //3 dimensional Laws' filters
+    vector<vector<float>> L3L3 = {
+        {0.027778, 0.055556, 0.027778},
+        {0.055556, 0.111111, 0.055556},
+        {0.027778, 0.055556, 0.027778}
+    };
+
+    vector<vector<float>> L3E3 = {
+        {-0.083333, -0.166667, -0.083333},
+        {0.000000, 0.000000, 0.000000},
+        {0.083333, 0.166667, 0.083333}
+    };
+
+    vector<vector<float>> L3S3 = {
+        {-0.083333, -0.166667, -0.083333},
+        {0.166667, 0.333333, 0.166667},
+        {-0.083333, -0.166667, -0.083333}
+    };
+
+    vector<vector<float>> E3L3 = {
+        {-0.083333, 0.000000, 0.083333},
+        {-0.166667, 0.000000, 0.166667},
+        {-0.083333, 0.000000, 0.083333}
+    };
+
+    vector<vector<float>> E3E3 = {
+        {0.250000, 0.000000, -0.250000},
+        {0.000000, 0.000000, 0.000000},
+        {-0.250000, 0.000000, 0.250000}
+    };
+
+    vector<vector<float>> E3S3 = {
+        {0.250000, 0.000000, -0.250000},
+        {-0.500000, 0.000000, 0.500000},
+        {0.250000, 0.000000, -0.250000}
+    };
+
+    vector<vector<float>> S3L3 = {
+        {-0.083333, 0.166667, -0.083333},
+        {-0.166667, 0.333333, -0.166667},
+        {-0.083333, 0.166667, -0.083333}
+    };                               
+
+    vector<vector<float>> S3E3 = {
+        {0.250000, -0.500000, 0.250000},
+        {0.000000, 0.000000, 0.000000},
+        {-0.250000, 0.500000, -0.250000}
+    };
+
+    vector<vector<float>> S3S3 = {
+        {0.250000, -0.500000, 0.250000},
+        {-0.500000, 1.000000, -0.500000},
+        {0.250000, -0.500000, 0.250000}
+    };
+
+    vector<vector<vector<float>>> lawsFilter;
+
+    if(kernelDimension == 5){
+        /*
+        lawsFilter.push_back(L5E5);
+        lawsFilter.push_back(L5R5);
+        lawsFilter.push_back(E5S5);
+        lawsFilter.push_back(S5S5);
+        lawsFilter.push_back(R5R5);
+        lawsFilter.push_back(L5S5);
+        lawsFilter.push_back(E5E5);
+        lawsFilter.push_back(E5R5);
+        lawsFilter.push_back(S5R5);
+        */
+
+        lawsFilter.push_back(E5E5);
+        lawsFilter.push_back(E5S5);
+        lawsFilter.push_back(E5W5);
+        lawsFilter.push_back(S5E5);
+        lawsFilter.push_back(S5S5);
+        lawsFilter.push_back(S5W5);
+        lawsFilter.push_back(W5E5);
+        lawsFilter.push_back(W5S5);
+        lawsFilter.push_back(W5W5);
+
+    } else if (kernelDimension == 3) {
+
+        lawsFilter.push_back(L3L3);
+        lawsFilter.push_back(L3E3);
+        lawsFilter.push_back(L3S3);
+        lawsFilter.push_back(E3L3);
+        lawsFilter.push_back(E3E3);
+        lawsFilter.push_back(E3S3);
+        lawsFilter.push_back(S3L3);
+        lawsFilter.push_back(S3E3);
+        lawsFilter.push_back(S3S3);
+
+    } else {
+        cout << "\n\nLaws' filter dimension not supported\n\n";
+    }
+    
+    return lawsFilter;
+}
+
+//Apply Laws' Filter
+vector<vector<float>> FeaturePointsOfSingleRegionUsingSingleLawsFilter(vector<vector<vector<int>>> &SingleChannelVector, vector<vector<float>> &lawsKernel){
+    int height = SingleChannelVector.size();
+    int width = SingleChannelVector.front().size();
+    int kernelSize = lawsKernel.size();
+
+    int outputHeight = height-kernelSize+1;
+    int outputWidth  = width-kernelSize+1;
+
+    vector<float> newFeatureColumn(outputWidth, 0);
+    vector<vector<float>> resultFeatureVector(outputHeight, newFeatureColumn);
+
+    vector<float> kernelColumn(kernelSize, 0);
+    vector<vector<float>> tempKernelBuffer (kernelSize, kernelColumn);
+
+    for(int q=0; q<outputHeight; q++){
+        for(int p=0; p<outputWidth; p++){
+                
+            float runningSum = 0;
+            for(int j=0; j<kernelSize; j++){
+                for(int i=0; i<kernelSize; i++){
+                    tempKernelBuffer[j][i] = (float)SingleChannelVector[ j+q ][ i+p ][0] * lawsKernel[j][i];
+                    runningSum += tempKernelBuffer[j][i];
+                }
+            }
+            resultFeatureVector[q][p] = runningSum;
+
+        }
+    }
+
+    //cout << "Laws filter applied to channel\n";
+
+    return resultFeatureVector;
+}
+
+//Extract features from images using Laws' filters, this function expects pre-processed images
+vector<vector<vector<vector<float>>>> FeaturePointsOfMultipleRegionsUsingMultipleLawsFilters (vector<vector<vector<vector<int>>>> CollectionOfBalancedImagePixelIntensities,
+                                                                                              vector<vector<vector<float>>> lawsFilter){
+    
+    vector<vector<vector<vector<float>>>> CollectionOfFilterOutputs_allImages;
+    
+    //Store all pre-processed images in a vector
+    int numberOfFilesFound = CollectionOfBalancedImagePixelIntensities.size();
+    int numberOfFilters = lawsFilter.size();
+    
+    //Store all features of subject images in a features vector
+    cout << "\nApplying Laws filters on all images ...\n";
+    for(int i=0; i<numberOfFilesFound; i++){
+        vector<vector<vector<float>>> CollectionOfFilterOutputs_singleImage;
+        for(int j=0; j<numberOfFilters; j++){
+            CollectionOfFilterOutputs_singleImage.push_back(FeaturePointsOfSingleRegionUsingSingleLawsFilter(CollectionOfBalancedImagePixelIntensities.at(i), lawsFilter.at(j)));
+        }
+        CollectionOfFilterOutputs_allImages.push_back(CollectionOfFilterOutputs_singleImage); 
+    }
+
+    return CollectionOfFilterOutputs_allImages;
+}
+
+
+//Apply Laws' Filter - PASS BY REFERENCE
+void FastFeaturePointsOfSingleRegionUsingSingleLawsFilter(vector<vector<vector<int>>> &SingleChannelVector, vector<vector<float>> &lawsKernel,
+                                                          vector<vector<float>> &resultFeatureVector){
+    
+    int height = SingleChannelVector.size();
+    int width = SingleChannelVector.front().size();
+    int kernelSize = lawsKernel.size();
+
+    int outputHeight = height-kernelSize+1;
+    int outputWidth  = width-kernelSize+1;
+
+    // cout << "Executing filter operation\n";
+    // cout << "Input Width : " << width << " Input Height : " << height << "\n";
+    // cout << "Output Width: " << outputWidth << " Output Height: " << outputHeight << "\n\n";
+
+    for(int q=0; q<outputHeight; q++){
+        for(int p=0; p<outputWidth; p++){
+                
+            float runningSum = 0;
+            for(int j=0; j<kernelSize; j++){
+                for(int i=0; i<kernelSize; i++){
+                    runningSum += (float)SingleChannelVector[ j+q ][ i+p ][0] * lawsKernel[j][i];
+                }
+            }
+            resultFeatureVector[q][p] = runningSum;
+
+        }
+    }
+
+}
+
+//Differentiate in X or Y direction using Sobel-filter
+vector<vector<vector<float>>> DifferentiateImageSobelFilterXY (vector<vector<vector<unsigned char>>> SingleChannelVector, unsigned char direction){
+
+    int height = SingleChannelVector.size();
+    int width = SingleChannelVector.front().size();
+    int kernelSize = 3;
+
+    int outputHeight = height-kernelSize+1;
+    int outputWidth  = width-kernelSize+1;
+
+    vector<float> resultPixel(1, 0);
+    vector<vector<float>> resultPixelRow(outputWidth, resultPixel);
+    vector<vector<vector<float>>> resultDifferentiatedImage(outputHeight, resultPixelRow);
+
+    vector<vector<float>> sobel_Gx = {
+        { 0.25,  0.00, -0.25},
+        { 0.50,  0.00, -0.50},
+        { 0.25,  0.00, -0.25},
+    };
+    vector<vector<float>> sobel_Gy = {
+        { 0.25,  0.50,  0.25},
+        { 0.00,  0.00,  0.00},
+        {-0.25, -0.50, -0.25},
+    };
+
+    vector<vector<float>> differentiationKernel;
+    if(direction == 'x'){
+        differentiationKernel = sobel_Gx;
+        cout << "X-axis" << endl;
+    }
+    else if(direction == 'y'){
+        differentiationKernel = sobel_Gy;
+        cout << "Y-axis" << endl;
+    }
+    else{
+        cout << "\n No such option. No operation applied. Return empty vector. \n";
+        return resultDifferentiatedImage;
+    }
+
+    for(int q=0; q<outputHeight; q++){
+        for(int p=0; p<outputWidth; p++){
+                
+            float runningSum = 0;
+            for(int j=0; j<kernelSize; j++){
+                for(int i=0; i<kernelSize; i++){
+                    runningSum += (float)SingleChannelVector[ j+q ][ i+p ][0] * differentiationKernel[j][i];
+                }
+            }
+            resultDifferentiatedImage[q][p][0] = runningSum;
+        }
+    }
+
+    return resultDifferentiatedImage;
+}
+
+//Differentiate an image in both directions - Sobel-filter - Normalized output
+vector<vector<vector<unsigned char>>> DifferentiateImageSobelFilter (vector<vector<vector<unsigned char>>> SingleChannelVector){
+
+    cout << "\nDifferentiating image to get edges ... \n";
+
+    int kernelSize = 3;
+    int height = SingleChannelVector.size();
+    int width = SingleChannelVector.front().size();
+
+    vector<unsigned char> resultPixel (1, 0);
+    vector<vector<unsigned char>> resultPixelRow (width, resultPixel);
+    vector<vector<vector<unsigned char>>> resultDifferentiatedImage (height, resultPixelRow);
+
+    //Pre-processing - expanding image for filter operation
+    SingleChannelVector = FilterPreprocessing(SingleChannelVector, kernelSize);
+
+    //Differentiating in X and Y directions
+    vector<vector<vector<float>>> differentedImageX = DifferentiateImageSobelFilterXY (SingleChannelVector, 'x');
+    vector<vector<vector<float>>> differentedImageY = DifferentiateImageSobelFilterXY (SingleChannelVector, 'y');
+
+    //Normalizing - Calclauting local gradient
+    for(int i=0; i<height; i++){
+        for(int j=0; j<width; j++){            
+            float gradientXSq = differentedImageX[i][j][0]*differentedImageX[i][j][0];
+            float gradientYSq = differentedImageY[i][j][0]*differentedImageY[i][j][0];
+            float gradient = sqrt(gradientXSq + gradientYSq);
+
+            unsigned char differentiatedPixel;
+            if(gradient > 255)
+                differentiatedPixel = 255;
+            else if(gradient < 0)
+                differentiatedPixel = 0;
+            else
+                differentiatedPixel = (unsigned char) gradient;
+
+            resultDifferentiatedImage[i][j][0] = differentiatedPixel;
+        }
+    }
+
+    return resultDifferentiatedImage;
+}
+
+//Double-differentiate an image in both directions - LoG-filter - Normalized output to het values in unsigned char
+double_differentiated_image DoubleDifferentiateImageLoGFilter (vector<vector<vector<unsigned char>>> SingleChannelVector){
+
+    cout << "\nDouble-differentiating image to get edges ... \n";
+
+    int kernelSize = 5;
+    vector<vector<float>> kernel_LoG_3 = {
+     {  0,    -0.25,   0  },
+     {  -0.25,  1,   -0.25},
+     {  0,    -0.25,   0  },
+    };
+
+    vector<vector<float>> kernel_LoG_5 ={
+    {-0.023869, -0.045974, -0.049931, -0.045974, -0.023869},
+    {-0.045974, -0.006055, 0.092265, -0.006055, -0.045974},
+    {-0.049931, 0.092265, 0.318151, 0.092265, -0.049931},
+    {-0.045974, -0.006055, 0.092265, -0.006055, -0.045974},
+    {-0.023869, -0.045974, -0.049931, -0.045974, -0.023869}
+    };
+
+    //vector<vector<float>> differentiationKernel = kernel_LoG_3;
+    vector<vector<float>> differentiationKernel = kernel_LoG_5;
+
+
+    int height = SingleChannelVector.size();
+    int width = SingleChannelVector.front().size();
+
+    vector<float> resultPixel(1, 0);
+    vector<vector<float>> resultPixelRow(width, resultPixel);
+    vector<vector<vector<float>>> resultDoubleDifferentiatedImage(height, resultPixelRow);
+
+    vector<unsigned char> resultPixelValue (1, 0);
+    vector<vector<unsigned char>> resultPixelValueRow (width, resultPixelValue);
+    vector<vector<vector<unsigned char>>> normalizedDoubleDifferentiatedImage (height, resultPixelValueRow);
+
+    //Pre-processing - expanding image for filter operation
+    SingleChannelVector = FilterPreprocessing(SingleChannelVector, kernelSize);
+
+    
+
+    //For normalizing
+    float maxResultPixelValue = FLT_MIN;
+    float minResultPixelValue = FLT_MAX;
+    float avgResultPixelValue;
+    float rangeResultPixelValue;
+    
+    //Double-differentiating in X and Y directions using LoG-filter
+    for(int q=0; q<height; q++){
+        for(int p=0; p<width; p++){
+                
+            float runningSum = 0;
+            for(int j=0; j<kernelSize; j++){
+                for(int i=0; i<kernelSize; i++){
+                    runningSum += (float)SingleChannelVector[ j+q ][ i+p ][0] * differentiationKernel[j][i];
+                }
+            }
+
+            //Update min and miax values for normalizing to be done later
+            if(runningSum > maxResultPixelValue)
+                maxResultPixelValue = runningSum;
+
+            if(runningSum < minResultPixelValue)
+                minResultPixelValue = runningSum;
+
+
+
+
+            resultDoubleDifferentiatedImage[q][p][0] = runningSum;
+            //cout << runningSum << endl;
+        }
+    }
+
+    avgResultPixelValue = (minResultPixelValue + maxResultPixelValue)/2;
+    rangeResultPixelValue = maxResultPixelValue - minResultPixelValue;
+
+    cout << setw(10) << setprecision(4) << "\nMax value: " << maxResultPixelValue << endl;
+    cout << setw(10) << setprecision(4) << "Min value: " << minResultPixelValue << endl;
+    cout << setw(10) << setprecision(4) << "Avg value: " << avgResultPixelValue << endl;
+    cout << setw(10) << setprecision(4) << "Range    : " << rangeResultPixelValue << endl << endl;
+
+    //Normalizing using avg and max values, Normalized Pixel = (Pixel Value - Average Pixel value) / Max Pixel value
+    for(int i=0; i<height; i++){
+        for(int j=0; j<width; j++){            
+            
+            //Since this is a Gaussian Distribution, we can take absolute value of normalized double differentiated of pixel
+            float normalizedDoubleDifferentiatedPixel = (resultDoubleDifferentiatedImage[i][j][0] - minResultPixelValue)*255.0/rangeResultPixelValue;
+            normalizedDoubleDifferentiatedImage[i][j][0] = (unsigned char) (abs(normalizedDoubleDifferentiatedPixel));
+        }
+    }
+
+    double_differentiated_image doubledifferentiatedImageInfo;
+    doubledifferentiatedImageInfo.DoubleDifferentiatedImage = resultDoubleDifferentiatedImage;
+    doubledifferentiatedImageInfo.NormalizedDoubleDifferentiatedImage = normalizedDoubleDifferentiatedImage;
+    doubledifferentiatedImageInfo.maxResultPixelValue = maxResultPixelValue;
+    doubledifferentiatedImageInfo.minResultPixelValue = minResultPixelValue;
+    doubledifferentiatedImageInfo.avgResultPixelValue = avgResultPixelValue;
+
+    return doubledifferentiatedImageInfo;
+}
+
+//Remove speckles from output - 0 for black, 255 for white background
+vector<vector<vector<unsigned char>>> SpeckleRemovalFilter (vector<vector<vector<unsigned char>>> binaryImageVector, unsigned char background){
+
+    int height = binaryImageVector.size();
+    int width = binaryImageVector.front().size();
+
+    unsigned char foreground = 255 - background;
+
+    vector<vector<vector<unsigned char>>> neighborVector = NeighborsInAByte (binaryImageVector);
+    for(int i=0; i<height; i++){
+        for(int j=0; j<width; j++){
+            
+            unsigned char neighbourValue = neighborVector[i][j][0];
+            unsigned char currentPixelValue = binaryImageVector[i][j][0];
+
+            if(currentPixelValue == foreground && neighbourValue == 255){
+                binaryImageVector[i][j][0] = background;
+                //cout << "Cleaned: " << j << ", " << i << endl;
+            }
+
+            if(currentPixelValue == background && ((neighbourValue == 10) || (neighbourValue == 40) || (neighbourValue == 160) || (neighbourValue == 130)) ){
+                binaryImageVector[i][j][0] = foreground;
+                //cout << "Cleaned: " << j << ", " << i << endl;
+            }
+        }
+    }
+
+    return binaryImageVector;
+}
+    

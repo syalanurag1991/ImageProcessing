@@ -10,6 +10,9 @@
 #include <map>
 #include <iomanip>
 
+//For reading files in a folder
+#include <dirent.h>
+
 #ifndef __FILEIO_H__
 #define __FILEIO_H__
 
@@ -27,5 +30,8 @@ vector<vector<vector<unsigned char>>> ImageInput(string fileName, int height, in
 
 //Image output
 bool ImageOutput(string fileName, vector<vector<vector<unsigned char>>>ImageVector);
+
+//Get entries/file-names of a directory
+vector <string> OpenFolder (string folderPath);
 
 #endif
